@@ -17,8 +17,12 @@ public class Settings {
 
         // HORNÍ PANEL
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        topPanel.setBackground(AppSettings.getBackgroundColor());
+
         JLabel label = new JLabel("Settings");
         label.setFont(new Font("Serif", Font.BOLD, 30));
+        label.setForeground(AppSettings.getForegroundColor());
+
         topPanel.add(label);
 
         frame.add(topPanel, BorderLayout.NORTH);
@@ -26,9 +30,12 @@ public class Settings {
         // STŘED
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.setBackground(AppSettings.getBackgroundColor());
 
         // USERNAME
         JLabel usernameLabel = new JLabel("Username:");
+        usernameLabel.setForeground(AppSettings.getForegroundColor());
+
         usernameLabel.setFont(new Font("Serif", Font.PLAIN, 20));
         usernameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -36,8 +43,13 @@ public class Settings {
         usernameField.setMaximumSize(new Dimension(200, 30));
         usernameField.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        usernameField.setBackground(AppSettings.getBackgroundColor());
+        usernameField.setForeground(AppSettings.getForegroundColor());
+
         // THEME
         JLabel themeLabel = new JLabel("Theme:");
+        themeLabel.setForeground(AppSettings.getForegroundColor());
+
         themeLabel.setFont(new Font("Serif", Font.PLAIN, 20));
         themeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -45,6 +57,9 @@ public class Settings {
         JComboBox<String> themeBox = new JComboBox<>(themes);
         themeBox.setMaximumSize(new Dimension(200, 30));
         themeBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        themeBox.setBackground(AppSettings.getBackgroundColor());
+        themeBox.setForeground(AppSettings.getForegroundColor());
 
         // NAČTENÍ AKTUÁLNÍCH HODNOT
         usernameField.setText(AppSettings.getUsername());
@@ -55,6 +70,10 @@ public class Settings {
         saveButton.setFont(new Font("Serif", Font.PLAIN, 25));
         saveButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         saveButton.setMaximumSize(new Dimension(200, 60));
+
+        saveButton.setForeground(AppSettings.getForegroundColor());
+        saveButton.setBackground(AppSettings.getBackgroundColor());
+        saveButton.setFocusPainted(false);
 
         saveButton.addActionListener(e -> {
 
@@ -73,6 +92,10 @@ public class Settings {
         backButton.setFont(new Font("Serif", Font.PLAIN, 25));
         backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.setMaximumSize(new Dimension(200, 60));
+
+        backButton.setForeground(AppSettings.getForegroundColor());
+        backButton.setBackground(AppSettings.getBackgroundColor());
+        backButton.setFocusPainted(false);
 
         backButton.addActionListener(e -> {
             new WelcomeScreen();

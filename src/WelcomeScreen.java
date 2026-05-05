@@ -18,6 +18,7 @@ public class WelcomeScreen {
         // HORNÍ PANEL
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         topPanel.setBackground(AppSettings.getBackgroundColor());
+
         JLabel label = new JLabel("Welcome " + AppSettings.getUsername());
         label.setFont(new Font("Serif", Font.BOLD, 30));
         label.setForeground(AppSettings.getForegroundColor());
@@ -43,16 +44,26 @@ public class WelcomeScreen {
         startButton.setFocusPainted(false);
 
         startButton.addActionListener(e -> {
-            new Menu();
-            frame.dispose();
+            JFrame gameFrame = new JFrame("Geometry Dash Clone");
+            Level gameLevel = new Level(gameFrame);
+            gameFrame.add(gameLevel);
+            gameFrame.setSize(800, 600);
+            gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            gameFrame.setLocationRelativeTo(null);
+            gameFrame.setVisible(true);
+            frame.dispose(); // Zavře menu
         });
 
         /* settings */
         JButton settingsButton = new JButton("Settings");
+
         settingsButton.setFont(new Font("Serif", Font.PLAIN, 30));
         settingsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         settingsButton.setMaximumSize(new Dimension(200, 60));
+
         settingsButton.setForeground(AppSettings.getForegroundColor());
+        settingsButton.setBackground(AppSettings.getBackgroundColor());
+        settingsButton.setFocusPainted(false);
 
         settingsButton.addActionListener(e -> {
             new Settings();
@@ -61,10 +72,14 @@ public class WelcomeScreen {
 
         /* exit */
         JButton exitButton = new JButton("Exit");
+
         exitButton.setFont(new Font("Serif", Font.PLAIN, 30));
         exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         exitButton.setMaximumSize(new Dimension(200, 60));
+
         exitButton.setForeground(AppSettings.getForegroundColor());
+        exitButton.setBackground(AppSettings.getBackgroundColor());
+        exitButton.setFocusPainted(false);
 
         exitButton.addActionListener(e -> frame.dispose());
 

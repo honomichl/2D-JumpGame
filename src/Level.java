@@ -1,2 +1,153 @@
-public class Level {
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Level extends JPanel implements ActionListener {
+
+    private Timer timer;
+    private int playerY;
+    private int playerVelocityY;
+    private final int GRAVITY = 1;
+    private final int JUMP_STRENGTH = -15;
+    private final int GROUND_Y = 450;
+    private final int PLAYER_X = 100;
+    private final int PLAYER_SIZE = 40;
+
+    private int score;
+    private boolean isGameOver;
+    private List<Rectangle> obstacles;
+    private int gameSpeed = 7;
+
+    // Tlačítko pro restart
+    private JButton restartButton;
+
+    public Level(JFrame parentFrame) {
+        this.setLayout(null); // Umožní nám nastavit přesnou pozici tlačítka
+        this.setBackground(AppSettings.getBackgroundColor());
+        this.setFocusable(true);
+
+        // Nastavení tlačítka
+        initRestartButton();
+
+        // Inicializace herních hodnot
+        resetGame();
+
+        // Ovládání
+        this.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (!isGameOver && e.getKeyCode() == KeyEvent.VK_SPACE && playerY >= GROUND_Y - PLAYER_SIZE) {
+                    playerVelocityY = JUMP_STRENGTH;
+                }
+            }
+        });
+
+        timer = new Timer(16, this);
+        timer.start();
+    }
+
+    private void initRestartButton() {
+        restartButton = new JButton("Restart Game");
+        restartButton.setBounds(300, 350, 200, 50); // Pozice uprostřed
+        restartButton.setFocusable(false); // Důležité, aby tlačítko nesebralo focus klávesnici
+        restartButton.setVisible(false); // Na začátku neviditelné
+
+        restartButton.addActionListener(e -> {
+            resetGame();
+            timer.start();
+            this.requestFocusInWindow(); // Vrátíme focus na hru pro skákání
+        });
+
+        this.add(restartButton);
+    }
+
+    private void resetGame() {
+        playerY = GROUND_Y - PLAYER_SIZE;
+        playerVelocityY = 0;
+        score = 0;
+        isGameOver = false;
+        restartButton.setVisible(false);
+
+        obstacles = new ArrayList<>();
+        obstacles.add(new Rectangle(800, GROUND_Y - 40, 40, 40));
+        obstacles.add(new Rectangle(1200, GROUND_Y - 40, 40, 40));
+        obstacles.add(new Rectangle(1600, GROUND_Y - 80, 40, 80));
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (!isGameOver) {
+            update();
+        }
+        repaint();
+    }
+
+    private void update() {
+        playerVelocityY += GRAVITY;
+        playerY += playerVelocityY;
+
+        if (playerY >= GROUND_Y - PLAYER_SIZE) {
+            playerY = GROUND_Y - PLAYER_SIZE;
+            playerVelocityY = 0;
+        }
+
+        Rectangle playerRect = new Rectangle(PLAYER_X, playerY, PLAYER_SIZE, PLAYER_SIZE);
+
+        for (Rectangle obs : obstacles) {
+            obs.x -= gameSpeed;
+
+            if (playerRect.intersects(obs)) {
+                gameOver();
+            }
+
+            if (obs.x < -50) {
+                obs.x = 1000 + (int)(Math.random() * 400);
+                score++;
+            }
+        }
+    }
+
+    private void gameOver() {
+        isGameOver = true;
+        timer.stop();
+        restartButton.setVisible(true); // Zobrazíme tlačítko
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+
+        // Vykreslení země
+        g2.setColor(AppSettings.getForegroundColor());
+        g2.drawLine(0, GROUND_Y, getWidth(), GROUND_Y);
+
+        // Vykreslení hráče
+        g2.setColor(new Color(0, 200, 255)); // Geometry Dash modrá
+        g2.fillRect(PLAYER_X, playerY, PLAYER_SIZE, PLAYER_SIZE);
+        g2.setColor(Color.BLACK);
+        g2.drawRect(PLAYER_X, playerY, PLAYER_SIZE, PLAYER_SIZE); // Obrys
+
+        // Vykreslení překážek
+        g2.setColor(Color.RED);
+        for (Rectangle obs : obstacles) {
+            g2.fillRect(obs.x, obs.y, obs.width, obs.height);
+        }
+
+        // Score
+        g2.setColor(AppSettings.getForegroundColor());
+        g2.setFont(new Font("Arial", Font.BOLD, 20));
+        g2.drawString("Score: " + score, 20, 30);
+
+        if (isGameOver) {
+            g2.setColor(new Color(0, 0, 0, 150)); // Ztmavení pozadí
+            g2.fillRect(0, 0, getWidth(), getHeight());
+
+            g2.setColor(Color.WHITE);
+            g2.setFont(new Font("Arial", Font.BOLD, 50));
+            g2.drawString("GAME OVER", 250, 300);
+        }
+    }
 }
