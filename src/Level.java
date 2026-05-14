@@ -8,8 +8,8 @@ import java.awt.event.KeyEvent;
 public class Level extends JPanel implements ActionListener {
 
     private Timer timer;
-    private int playerSize = 400; // Výška hráče
-    private int playerJump = 0; // Rychlost skoku
+    private int playerY = 400; // Výška hráče
+    private int jumpSpeed = 0; // Rychlost skoku
     private final int GRAVITY = 1;
 
     public Level(JFrame frame) {
@@ -20,8 +20,8 @@ public class Level extends JPanel implements ActionListener {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_SPACE && playerSize >= 400) {
-                    playerJump = -15; // Skok nahoru
+                if (e.getKeyCode() == KeyEvent.VK_SPACE && playerY >= 400) {
+                    jumpSpeed = -15; // Skok nahoru
                 }
             }
         });
@@ -31,7 +31,7 @@ public class Level extends JPanel implements ActionListener {
         timer.start();
     }
 
-    // TADY SE DĚJE VEŠKERÁ MAGIE KRESLENÍ
+    // KRESLENÍ
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -46,24 +46,24 @@ public class Level extends JPanel implements ActionListener {
 
         // Nakreslíme hráče (kostku)
         g2d.setColor(Color.YELLOW);
-        g2d.fillRect(100, playerSize, 50, 50);
+        g2d.fillRect(100, playerY, 50, 50);
 
         // Nakreslíme obrys (aby to vypadalo jako v GD)
         g2d.setColor(Color.BLACK);
-        g2d.drawRect(100, playerSize, 50, 50);
+        g2d.drawRect(100, playerY, 50, 50);
     }
 
     // TADY SE POČÍTÁ POHYB (Logika)
     @Override
     public void actionPerformed(ActionEvent e) {
         // Gravitace a pohyb
-        playerSize += playerJump;
+        playerY += jumpSpeed;
 
-        if (playerSize < 400) {
-            playerJump += GRAVITY; // Padá dolů
+        if (playerY < 400) {
+            jumpSpeed += GRAVITY; // Padá dolů
         } else {
-            playerSize = 400; // Zastaví se na zemi
-            playerJump = 0;
+            playerY = 400; // Zastaví se nazemi
+            jumpSpeed = 0;
         }
 
         repaint(); // Znovu zavolá paintComponent
