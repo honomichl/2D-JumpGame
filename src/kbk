@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList; // NOVÉ
 
 public class Level extends JPanel implements ActionListener {
 
@@ -12,9 +13,22 @@ public class Level extends JPanel implements ActionListener {
     private int jumpSpeed = 0; // Rychlost skoku
     private final int GRAVITY = 1;
 
+    // NOVÉ: Proměnné pro posun světa, pokusy a seznam spiků
+    private int cameraX = 0;
+    private final int GAME_SPEED = 5;
+    private int attempts = 1;
+    private ArrayList<Spike> spikes;
+
     public Level(JFrame frame) {
         this.setBackground(AppSettings.getBackgroundColor());
         this.setFocusable(true); // Nutné, aby panel vnímal klávesnici
+
+        // NOVÉ: Inicializace spiků v levelu
+        spikes = new ArrayList<>();
+        spikes.add(new Spike(600));
+        spikes.add(new Spike(900));
+        spikes.add(new Spike(1300));
+        spikes.add(new Spike(1350)); // Dvojitý spike
 
         // Posluchač kláves (ovládání)
         this.addKeyListener(new KeyAdapter() {
@@ -31,6 +45,14 @@ public class Level extends JPanel implements ActionListener {
         timer.start();
     }
 
+    // NOVÉ: Pomocná metoda pro reset při smrti
+    private void resetLevel() {
+        playerY = 400;
+        jumpSpeed = 0;
+        cameraX = 0;     // Vrátí kameru na začátek
+        attempts++;      // Přičte pokus
+    }
+
     // KRESLENÍ
     @Override
     protected void paintComponent(Graphics g) {
@@ -42,15 +64,25 @@ public class Level extends JPanel implements ActionListener {
 
         // Nakreslíme podlahu
         g2d.setColor(Color.CYAN);
-        g2d.fillRect(0, 450, 800, 5);
+        g2d.fillRect(0, 450, getWidth(), 5);
+
+        // NOVÉ: Nakreslíme všechny spiky
+        for (Spike spike : spikes) {
+            spike.draw(g2d, cameraX);
+        }
 
         // Nakreslíme hráče (kostku)
         g2d.setColor(Color.YELLOW);
         g2d.fillRect(100, playerY, 50, 50);
 
-        // Nakreslíme obrys (aby to vypadalo jako v GD)
-        g2d.setColor(Color.BLACK);
+        // Nakreslíme obrys (přizpůsobený textu/tématu)
+        g2d.setColor(AppSettings.getForegroundColor());
         g2d.drawRect(100, playerY, 50, 50);
+
+        // NOVÉ: Zobrazení pokusů v horní části obrazovky
+        g2d.setColor(AppSettings.getForegroundColor());
+        g2d.setFont(new Font("Arial", Font.BOLD, 18));
+        g2d.drawString("Attempt " + attempts, 350, 50);
     }
 
     // TADY SE POČÍTÁ POHYB (Logika)
@@ -62,8 +94,20 @@ public class Level extends JPanel implements ActionListener {
         if (playerY < 400) {
             jumpSpeed += GRAVITY; // Padá dolů
         } else {
-            playerY = 400; // Zastaví se nazemi
+            playerY = 400; // Zastaví se na zemi
             jumpSpeed = 0;
+        }
+
+        // NOVÉ: Neustálý posun světa dopředu
+        cameraX += GAME_SPEED;
+
+        // NOVÉ: Kontrola kolize (Hitbox hráče posunem v globálním světě)
+        Rectangle playerHitbox = new Rectangle(100 + cameraX, playerY, 50, 50);
+        for (Spike spike : spikes) {
+            if (spike.getHitbox().intersects(playerHitbox)) {
+                resetLevel();
+                break; // Hráč umřel, nemusíme kontrolovat další spiky v tomto tiku
+            }
         }
 
         repaint(); // Znovu zavolá paintComponent
