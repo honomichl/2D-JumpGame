@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 public class Level extends JPanel implements ActionListener {
 
+    //TODO easy zmeny
+
     private Timer timer;
     private int playerY = 400; // Výška hráče
     private int jumpSpeed = 0; // Rychlost skoku
