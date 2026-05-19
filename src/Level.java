@@ -8,96 +8,126 @@ import java.util.ArrayList;
 
 public class Level extends JPanel implements ActionListener {
 
-    //TODO easy zmeny
-
     private Timer timer;
-    private int playerY = 400; // Výška hráče
-    private int jumpSpeed = 0; // Rychlost skoku
+    /* zacinajici vyska hrace */
+    private int playerY = 360;
+    /* pozice hrace x */
+    private final int playerX = 150;
+    /* gravitace hrace(1 = klasika, -1 = vzhuru nohama) */
     private final int GRAVITY = 1;
-
+    /* vyska skoku */
+    private final double JUMP_FORCE = -14;
+    /* rychlost hrace */
+    private final int GAME_SPEED = 7;
+    /* budouci pozice x */
+    private double jumpSpeed = 0;
+    /* kamera */
     private int cameraX = 0;
-    private final int GAME_SPEED = 5;
+    /* pocet pokusu */
     private int attempts = 1;
+    /* je na zemy? */
+    private boolean onGround = true;
 
     private ArrayList<Spike> spikes;
-    private ArrayList<Block> blocks; // NOVÉ: Seznam bloků
+    private ArrayList<Block> blocks;
 
-    // Pomocná proměnná pro kontrolu, zda hráč stojí na nějakém objektu
-    private boolean onGround = true;
 
     public Level(JFrame frame) {
         this.setBackground(AppSettings.getBackgroundColor());
         this.setFocusable(true);
 
-        // Inicializace spiků
+        // Inicializace prázdných seznamů
         spikes = new ArrayList<>();
-        spikes.add(new Spike(600));
-        spikes.add(new Spike(1300));
-        spikes.add(new Spike(1350));
-
-        // NOVÉ: Inicializace bloků (souřadnice X a Y)
         blocks = new ArrayList<>();
-        // Výška 400 je úroveň země. Blok s Y=350 vytvoří schod vysoký 50px.
-        blocks.add(new Block(900, 400));   // První blok na zemi
-       // blocks.add(new Block(950, 350));   // Druhý blok (schůdek výš)
-        blocks.add(new Block(1000, 350));  // Plošina na skákání
-        blocks.add(new Block(1050, 350));  // Prodloužení plošiny
 
-        // Spike umístěný na bloku pro extra obtížnost!
-        spikes.add(new Spike(1000)); // Spike na souřadnici 1000 (bude stát na bloku)
+        // JEDNODUCHÉ VOLÁNÍ: Předáme cestu k souboru, naše seznamy a klíčové slovo 'this' (aby mohl reader nastavit pozici hráče)
+        LevelReader.loadLevel("/LevelLibrary.json", blocks, spikes, this);
 
-        // Posluchač kláves (ovládání)
+        // Posluchač kláves...
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                // Skočit lze pouze tehdy, pokud stojíme na zemi nebo na bloku
                 if (e.getKeyCode() == KeyEvent.VK_SPACE && onGround) {
-                    jumpSpeed = -15;
+                    jumpSpeed = JUMP_FORCE;
                     onGround = false;
                 }
             }
         });
 
-        // Game Loop
         timer = new Timer(16, this);
         timer.start();
     }
 
+    /* reset levelu */
     private void resetLevel() {
-        playerY = 400;
+        playerY = 360;
         jumpSpeed = 0;
         cameraX = 0;
         attempts++;
         onGround = true;
     }
 
-    // KRESLENÍ
-    @Override
+    /* vykresleni */
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Podlaha
-        g2d.setColor(Color.CYAN);
-        g2d.fillRect(0, 450, getWidth(), 5);
+        /* vykresleni mrizky */
+        g2d.setColor(new Color(128, 128, 128, 50));
+        int gridSize = 40;
+        int offsetX = cameraX % gridSize;
 
-        // NOVÉ: Nakreslíme všechny bloky
+        for (int x = -offsetX; x < getWidth(); x += gridSize) {
+            g2d.drawLine(x, 0, x, getHeight());
+        }
+        for (int y = 0; y < getHeight(); y += gridSize) {
+            g2d.drawLine(0, y, getWidth(), y);
+        }
+
+        /* vykresleni podlahy */
+        g2d.setColor(Color.CYAN);
+        g2d.fillRect(0, 400, getWidth(), 50);
+
+        // Kreslení bloků a spiků (Grafika)
         for (Block block : blocks) {
             block.draw(g2d, cameraX);
         }
-
-        // Nakreslíme všechny spiky
         for (Spike spike : spikes) {
             spike.draw(g2d, cameraX);
         }
 
-        // Nakreslíme hráče
+        // Kreslení hráče (Grafika)
         g2d.setColor(Color.YELLOW);
-        g2d.fillRect(100, playerY, 50, 50);
+        g2d.fillRect(playerX, playerY, 40, 40);
 
         g2d.setColor(AppSettings.getForegroundColor());
-        g2d.drawRect(100, playerY, 50, 50);
+        g2d.drawRect(playerX, playerY, 40, 40);
+
+        // =================================================================
+        //  VYKRESLENÍ HITBOXŮ PRO LADĚNÍ (Zelená barva)
+        // =================================================================
+        g2d.setColor(Color.GREEN);
+
+        // 1. Hitbox hráče
+        g2d.drawRect(playerX, playerY, 40, 40);
+
+        // Pomocná transformace posunu světa
+        g2d.translate(-cameraX, 0);
+
+        // 2. Hitboxy spiků
+        for (Spike spike : spikes) {
+            g2d.drawPolygon(spike.getHitbox());
+        }
+
+        // 3. Hitboxy bloků
+        for (Block block : blocks) {
+            g2d.draw(block.getHitbox());
+        }
+
+        // Vrátíme transformaci zpět pro správné vykreslení zbytku
+        g2d.translate(cameraX, 0);
+        // =================================================================
 
         // Zobrazení pokusů
         g2d.setColor(AppSettings.getForegroundColor());
@@ -108,49 +138,42 @@ public class Level extends JPanel implements ActionListener {
     // LOGIKA POHYBU A KOLIZÍ
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Použijeme gravitaci
         jumpSpeed += GRAVITY;
         playerY += jumpSpeed;
 
-        // Posun světa dopředu
         cameraX += GAME_SPEED;
 
         // Hitbox hráče v globálním světě
-        Rectangle playerHitbox = new Rectangle(100 + cameraX, playerY, 50, 50);
+        Rectangle playerHitbox = new Rectangle(playerX + cameraX, playerY, 40, 40);
 
-        // 1. KONTROLA KOLIZE SE SPIKY (Smrt)
+        // 1. Kontrola kolize se spiky
         for (Spike spike : spikes) {
             if (spike.getHitbox().intersects(playerHitbox)) {
                 resetLevel();
                 repaint();
-                return; // Ukončíme metodu, hráč restartoval
+                return;
             }
         }
 
-        // 2. KONTROLA KOLIZÍ S BLOKY (Plošiny)
-        onGround = false; // Předpokládáme, že padá, dokud neověříme opak
+        // 2. Kontrola kolizí s bloky
+        onGround = false;
 
-        // Základní kontrola pro podlahu (Y = 400)
-        if (playerY >= 400) {
-            playerY = 400;
+        if (playerY >= 360) {
+            playerY = 360;
             jumpSpeed = 0;
             onGround = true;
         }
 
-        // Kontrola pro jednotlivé bloky
         for (Block block : blocks) {
             Rectangle blockBox = block.getHitbox();
 
             if (playerHitbox.intersects(blockBox)) {
-                // Kontrola, zda padáme na blok SHORA
-                // Hráčův spodek (playerY + 50) je blízko vršku bloku a zároveň hráč padá dolů (jumpSpeed >= 0)
-                if ((playerY + 50) - jumpSpeed <= block.getY() + 10 && jumpSpeed >= 0) {
-                    playerY = block.getY() - 50; // Umístíme hráče přesně na blok
+                if ((playerY + 40) - jumpSpeed <= block.getY() + 10 && jumpSpeed >= 0) {
+                    playerY = block.getY() - 40;
                     jumpSpeed = 0;
                     onGround = true;
                 }
-                // Pokud do bloku narazíme Z BOKU (čelní náraz), v Geometry Dash to znamená smrt!
-                else if (playerHitbox.x + 50 > blockBox.x && playerHitbox.x < blockBox.x + 10) {
+                else if (playerHitbox.x + 40 > blockBox.x && playerHitbox.x < blockBox.x + 10) {
                     resetLevel();
                     repaint();
                     return;
@@ -159,5 +182,37 @@ public class Level extends JPanel implements ActionListener {
         }
 
         repaint();
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
+    }
+
+    public void setPlayerY(int playerY) {
+        this.playerY = playerY;
+    }
+
+    public void setJumpSpeed(double jumpSpeed) {
+        this.jumpSpeed = jumpSpeed;
+    }
+
+    public void setCameraX(int cameraX) {
+        this.cameraX = cameraX;
+    }
+
+    public void setAttempts(int attempts) {
+        this.attempts = attempts;
+    }
+
+    public void setOnGround(boolean onGround) {
+        this.onGround = onGround;
+    }
+
+    public void setSpikes(ArrayList<Spike> spikes) {
+        this.spikes = spikes;
+    }
+
+    public void setBlocks(ArrayList<Block> blocks) {
+        this.blocks = blocks;
     }
 }

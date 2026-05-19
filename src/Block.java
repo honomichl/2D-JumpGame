@@ -3,7 +3,7 @@ import java.awt.*;
 public class Block {
     private int x;
     private int y; // Výška bloku (např. 400 je na zemi, 350 je ve vzduchu)
-    private final int size = 50;
+    private final int size = 40;
 
     public Block(int x, int y) {
         this.x = x;

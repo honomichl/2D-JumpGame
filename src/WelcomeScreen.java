@@ -51,6 +51,7 @@ public class WelcomeScreen {
             gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             gameFrame.setLocationRelativeTo(null);
             gameFrame.setVisible(true);
+            gameFrame.setResizable(false);
             frame.dispose(); // Zavře menu
         });
 

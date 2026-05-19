@@ -1,115 +1,39 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList; // NOVÉ
-
-public class Level extends JPanel implements ActionListener {
-
-    private Timer timer;
-    private int playerY = 400; // Výška hráče
-    private int jumpSpeed = 0; // Rychlost skoku
-    private final int GRAVITY = 1;
-
-    // NOVÉ: Proměnné pro posun světa, pokusy a seznam spiků
-    private int cameraX = 0;
-    private final int GAME_SPEED = 5;
-    private int attempts = 1;
-    private ArrayList<Spike> spikes;
-
-    public Level(JFrame frame) {
-        this.setBackground(AppSettings.getBackgroundColor());
-        this.setFocusable(true); // Nutné, aby panel vnímal klávesnici
-
-        // NOVÉ: Inicializace spiků v levelu
+// Inicializace spiků
         spikes = new ArrayList<>();
         spikes.add(new Spike(600));
-        spikes.add(new Spike(900));
-        spikes.add(new Spike(1300));
-        spikes.add(new Spike(1350)); // Dvojitý spike
+        spikes.add(new Spike(1900));
+        spikes.add(new Spike(1950));
+        spikes.add(new Spike(2000));
 
-        // Posluchač kláves (ovládání)
-        this.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_SPACE && playerY >= 400) {
-                    jumpSpeed = -15; // Skok nahoru
-                }
-            }
-        });
+        // Inicializace bloků
+        blocks = new ArrayList<>();
+        blocks.add(new Block(900, 400));
+        blocks.add(new Block(1500, 400));
+        blocks.add(new Block(1000, 400));
+        blocks.add(new Block(1700, 350));
 
-        // Game Loop - tikne každých 16 ms (~60 snímků za vteřinu)
-        timer = new Timer(16, this);
-        timer.start();
-    }
 
-    // NOVÉ: Pomocná metoda pro reset při smrti
-    private void resetLevel() {
-        playerY = 400;
-        jumpSpeed = 0;
-        cameraX = 0;     // Vrátí kameru na začátek
-        attempts++;      // Přičte pokus
-    }
+        spikes.add(new Spike(3000));
 
-    // KRESLENÍ
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
 
-        // Zapneme vyhlazování, aby to vypadalo hezky
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // Inicializace prázdných seznamů
+            spikes = new ArrayList<>();
+            blocks = new ArrayList<>();
 
-        // Nakreslíme podlahu
-        g2d.setColor(Color.CYAN);
-        g2d.fillRect(0, 450, getWidth(), 5);
+            // JEDNODUCHÉ VOLÁNÍ: Předáme cestu k souboru, naše seznamy a klíčové slovo 'this' (aby mohl reader nastavit pozici hráče)
+            LevelReader.loadLevel("/levels.json", blocks, spikes, this);
 
-        // NOVÉ: Nakreslíme všechny spiky
-        for (Spike spike : spikes) {
-            spike.draw(g2d, cameraX);
+            // Posluchač kláves...
+            this.addKeyListener(new KeyAdapter() {
+                        @Override
+                        public void keyPressed(KeyEvent e) {
+                            if (e.getKeyCode() == KeyEvent.VK_SPACE && onGround) {
+                                jumpSpeed = JUMP_FORCE;
+                                onGround = false;
+                            }
+                        }
+                    });
+
+            timer = new Timer(16, this);
+            timer.start();
         }
-
-        // Nakreslíme hráče (kostku)
-        g2d.setColor(Color.YELLOW);
-        g2d.fillRect(100, playerY, 50, 50);
-
-        // Nakreslíme obrys (přizpůsobený textu/tématu)
-        g2d.setColor(AppSettings.getForegroundColor());
-        g2d.drawRect(100, playerY, 50, 50);
-
-        // NOVÉ: Zobrazení pokusů v horní části obrazovky
-        g2d.setColor(AppSettings.getForegroundColor());
-        g2d.setFont(new Font("Arial", Font.BOLD, 18));
-        g2d.drawString("Attempt " + attempts, 350, 50);
-    }
-
-    // TADY SE POČÍTÁ POHYB (Logika)
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // Gravitace a pohyb
-        playerY += jumpSpeed;
-
-        if (playerY < 400) {
-            jumpSpeed += GRAVITY; // Padá dolů
-        } else {
-            playerY = 400; // Zastaví se na zemi
-            jumpSpeed = 0;
-        }
-
-        // NOVÉ: Neustálý posun světa dopředu
-        cameraX += GAME_SPEED;
-
-        // NOVÉ: Kontrola kolize (Hitbox hráče posunem v globálním světě)
-        Rectangle playerHitbox = new Rectangle(100 + cameraX, playerY, 50, 50);
-        for (Spike spike : spikes) {
-            if (spike.getHitbox().intersects(playerHitbox)) {
-                resetLevel();
-                break; // Hráč umřel, nemusíme kontrolovat další spiky v tomto tiku
-            }
-        }
-
-        repaint(); // Znovu zavolá paintComponent
-    }
-}

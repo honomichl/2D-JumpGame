@@ -1,39 +1,48 @@
 import java.awt.*;
 
 public class Spike {
-    // Fixní pozice v herním světě
     private int x;
-    private final int y = 400; // Stojí na podlaze (450 - 50 výška spiku)
-    private final int width = 400; // Šířka základny
-    private final int height = 50;
+    private int y;
+    private final int size = 40;
 
-    public Spike(int x) {
+
+    public Spike(int x, int y) {
         this.x = x;
+        this.y = y;
     }
 
-    // Vykreslení spiku s ohledem na posun kamery
+    // Vizuální vykreslení zůstává VELKÉ, aby hra dobře vypadala
     public void draw(Graphics2D g2d, int cameraX) {
         int screenX = x - cameraX;
 
-        // Vykreslíme spike jen pokud je vidět na obrazovce (optimalizace)
-        if (screenX > -50 && screenX < 850) {
-            int[] xPoints = {screenX, screenX + 25, screenX + 50};
-            int[] yPoints = {y + 50, y, y + 50};
+        int[] xPoints = {screenX, screenX + (size / 2), screenX + size};
+        int[] yPoints = {y + size, y, y + size};
 
-            // Vnitřek trojúhelníku (červený jako nebezpečí)
-            g2d.setColor(Color.RED);
-            g2d.fillPolygon(xPoints, yPoints, 3);
+        g2d.setColor(Color.RED);
+        g2d.fillPolygon(xPoints, yPoints, 3);
 
-            // Obrys spiku podle tématu (Light/Dark)
-            g2d.setColor(AppSettings.getForegroundColor());
-            g2d.drawPolygon(xPoints, yPoints, 3);
-        }
+        g2d.setColor(AppSettings.getForegroundColor());
+        g2d.drawPolygon(xPoints, yPoints, 3);
     }
 
-    // Vrátí hitbox spiku jako Polygon pro přesnou detekci kolize trojúhelníku
+    // NOVÉ: Hitbox je MENŠÍ než grafika (přesně jako v Geometry Dash)
     public Polygon getHitbox() {
-        int[] xPoints = {x, x + 25, x + 50};
-        int[] yPoints = {y + 50, y, y + 50};
+        int paddingX = 15;  // O kolik pixelů bude hitbox užší zleva i zprava (celkem o 16px)
+        int paddingY = 10; // O kolik pixelů bude hitbox nižší shora
+
+        // Přepočítané body pro menší trojúhelník uvnitř spiku
+        int[] xPoints = {
+                x + paddingX,               // Levý dolní roh posunutý doprava
+                x + (size / 2),            // Vrchol zůstává uprostřed
+                x + size - paddingX        // Pravý dolní roh posunutý doleva
+        };
+
+        int[] yPoints = {
+                y + size,                 // Spodek necháme na zemi
+                y + paddingY,               // Vrchol posunutý dolů (nižší spike)
+                y + size                  // Spodek necháme na zemi
+        };
+
         return new Polygon(xPoints, yPoints, 3);
     }
 }
