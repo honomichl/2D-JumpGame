@@ -36,12 +36,32 @@ public class Level extends JPanel implements ActionListener {
         this.setBackground(AppSettings.getBackgroundColor());
         this.setFocusable(true);
 
-        // Inicializace prázdných seznamů
+        // V konstruktoru třídy Level:
         spikes = new ArrayList<>();
         blocks = new ArrayList<>();
 
-        // JEDNODUCHÉ VOLÁNÍ: Předáme cestu k souboru, naše seznamy a klíčové slovo 'this' (aby mohl reader nastavit pozici hráče)
-        LevelReader.loadLevel("/LevelLibrary.json", blocks, spikes, this);
+// Reader ti jen podá čisté řádky z JSONu
+        ArrayList<String> radky = LevelReader.loadLevelLines("/LevelLibrary.json");
+
+        if (radky != null) {
+            for (int r = 0; r < radky.size(); r++) {
+                String radek = radky.get(r);
+
+                for (int c = 0; c < radek.length(); c++) {
+                    char znak = radek.charAt(c);
+                    int x = c * 40;
+                    int y = r * 40;
+
+                    if (znak == 'P') {
+                        this.playerY = y; // Tady jsi v třídě Level, takže můžeš rovnou měnit playerY!
+                    } else if (znak == 'b') {
+                        blocks.add(new Block(x, y));
+                    } else if (znak == 's') {
+                        spikes.add(new Spike(x, y));
+                    }
+                }
+            }
+        }
 
         // Posluchač kláves...
         this.addKeyListener(new KeyAdapter() {
