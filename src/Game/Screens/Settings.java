@@ -1,3 +1,7 @@
+package Game.Screens;
+
+import Game.*;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -7,7 +11,7 @@ public class Settings {
 
     public Settings() {
 
-        frame = new JFrame("Settings");
+        frame = new JFrame("Game.Settings");
 
         frame.setSize(800, 600);
         frame.setLocationRelativeTo(null);
@@ -19,7 +23,7 @@ public class Settings {
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         topPanel.setBackground(AppSettings.getBackgroundColor());
 
-        JLabel label = new JLabel("Settings");
+        JLabel label = new JLabel("Game.Settings");
         label.setFont(new Font("Serif", Font.BOLD, 30));
         label.setForeground(AppSettings.getForegroundColor());
 
@@ -80,7 +84,7 @@ public class Settings {
             AppSettings.setUsername(usernameField.getText());
             AppSettings.setTheme((String) themeBox.getSelectedItem());
 
-            System.out.println("Settings uložené:");
+            System.out.println("Game.Screens.Settings uložené:");
             System.out.println(AppSettings.getUsername() + " | " + AppSettings.getTheme());
 
             new WelcomeScreen();
@@ -98,7 +102,7 @@ public class Settings {
         backButton.setFocusPainted(false);
 
         backButton.addActionListener(e -> {
-            new WelcomeScreen();
+            new Game.Screens.WelcomeScreen();
             frame.dispose();
         });
 

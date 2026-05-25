@@ -1,3 +1,4 @@
+package Game;
 
 import com.google.gson.Gson;
 import java.io.InputStream;

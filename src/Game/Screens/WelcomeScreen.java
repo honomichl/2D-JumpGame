@@ -1,3 +1,6 @@
+package Game.Screens;
+
+import Game.*;
 import javax.swing.*;
 import java.awt.*;
 
@@ -45,7 +48,7 @@ public class WelcomeScreen {
 
         startButton.addActionListener(e -> {
             JFrame gameFrame = new JFrame("Geometry Dash Clone");
-            Level gameLevel = new Level(gameFrame);
+            Game.Screens.Level gameLevel = new Game.Screens.Level(gameFrame);
             gameFrame.add(gameLevel);
             gameFrame.setSize(800, 600);
             gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,7 +59,7 @@ public class WelcomeScreen {
         });
 
         /* settings */
-        JButton settingsButton = new JButton("Settings");
+        JButton settingsButton = new JButton("Game.Screens.Settings");
 
         settingsButton.setFont(new Font("Serif", Font.PLAIN, 30));
         settingsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -67,7 +70,7 @@ public class WelcomeScreen {
         settingsButton.setFocusPainted(false);
 
         settingsButton.addActionListener(e -> {
-            new Settings();
+            new Game.Screens.Settings();
             frame.dispose();
         });
 
