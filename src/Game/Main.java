@@ -6,9 +6,8 @@ public class Main {
     }
 }
 
+//TODO upravit collisions
 //TODO upravit ws a ss
-//TODO hitbox spiku
-//TODO mini hitbox hrace
 //TODO animace
 //TODO stop menu
 //TODO error screen

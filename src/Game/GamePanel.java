@@ -92,7 +92,10 @@ public class GamePanel extends JPanel implements ActionListener {
 
         /** temporary hitboxes */
         g2d.setColor(Color.GREEN);
-        g2d.draw(player.getHitbox());
+        g2d.draw(player.getBigHitbox());
+
+        g2d.setColor(Color.GREEN);
+        g2d.draw(player.getSmallHitbox());
 
         g2d.translate(-cameraX, 0);
         for (Spike spike : spikes) {

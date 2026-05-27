@@ -6,14 +6,19 @@ import java.awt.*;
  * Reprezentuje žlutou kostku (hráče), její stav, fyziku pohybu a skákání.
  */
 public class Player {
-    private int x;
-    private final int startX;
-    private int y;
-    private final int startY;
-    private final int size = 40;
+    private static final int gravity = 1;
+    private static final double JUMP_FORCE = -14;
+    private static final int size = 40;
 
-    private final int GRAVITY = 1;
-    private final double JUMP_FORCE = -14;
+    private final int offset = 10;
+    private final Rectangle bigHitbox;
+    private final Rectangle smallHitbox;
+
+    private final int startX;
+    private final int startY;
+
+    private int x;
+    private int y;
     private double jumpSpeed = 0;
     private boolean onGround = true;
 
@@ -26,6 +31,9 @@ public class Player {
         this.y = startY;
         this.startX = startX;
         this.startY = startY;
+
+        this.bigHitbox = new Rectangle(startX, startY, size, size);
+        this.smallHitbox = new Rectangle(startX + offset, startY + offset, size - (offset*2), size - (offset*2));
     }
 
     /**
@@ -42,8 +50,11 @@ public class Player {
      * updates player speed on the Y axis
      */
     public void updateMovement() {
-        this.jumpSpeed += GRAVITY;
+        this.jumpSpeed += gravity;
         this.y += this.jumpSpeed;
+
+        this.bigHitbox.y = this.y;
+        this.smallHitbox.y = this.y + offset;
     }
 
     /**
@@ -54,6 +65,8 @@ public class Player {
         this.x = startX;
         this.jumpSpeed = 0;
         this.onGround = false;
+        this.bigHitbox.y = this.startY;
+        this.smallHitbox.y = this.startY;
     }
 
     /**
@@ -67,14 +80,13 @@ public class Player {
         g2d.drawRect(x, y, size, size);
     }
 
-    /**
-     * returns hitbox of player
-     */
-    public Rectangle getHitbox() {
-        return new Rectangle(x, y, size, size);
-    }
-
     /** Getters */
+    public Rectangle getBigHitbox() {
+        return bigHitbox;
+    }
+    public Rectangle getSmallHitbox() {
+        return smallHitbox;
+    }
     public int getX() {
         return x;
     }
