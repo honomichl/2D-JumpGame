@@ -4,19 +4,19 @@ import Game.*;
 import javax.swing.*;
 import java.awt.*;
 
-public class WelcomeScreen {
+//TODO zhezcit
 
-    private JFrame frame;
+// Změna 1: Třída je teď JPanel, ne samostatné okno
+public class WelcomeScreen extends JPanel {
 
-    public WelcomeScreen(){
-        frame = new JFrame("moje apka");
+    private ScreenManager screen;
 
-        frame.setSize(800,600);
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    // Změna 2: Konstruktor přijímá ScreenManager
+    public WelcomeScreen(ScreenManager screen){
+        this.screen = screen;
 
-        frame.setLayout(new BorderLayout());
+        // Změna 3: Smazán JFrame, konfigurujeme rovnou tento panel
+        setLayout(new BorderLayout());
 
         // HORNÍ PANEL
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -28,7 +28,8 @@ public class WelcomeScreen {
 
         topPanel.add(label);
 
-        frame.add(topPanel, BorderLayout.NORTH);
+        // Přidáváme na this panel
+        add(topPanel, BorderLayout.NORTH);
 
         // STŘED (MENU)
         JPanel centerPanel = new JPanel();
@@ -47,19 +48,12 @@ public class WelcomeScreen {
         startButton.setFocusPainted(false);
 
         startButton.addActionListener(e -> {
-            JFrame gameFrame = new JFrame("Geometry Dash Clone");
-            Game.Screens.Level gameLevel = new Game.Screens.Level(gameFrame);
-            gameFrame.add(gameLevel);
-            gameFrame.setSize(800, 600);
-            gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            gameFrame.setLocationRelativeTo(null);
-            gameFrame.setVisible(true);
-            gameFrame.setResizable(false);
-            frame.dispose(); // Zavře menu
+            // Změna 4: Spuštění hry přes ScreenManager bez otevírání nového okna
+            screen.showGameScreen();
         });
 
         /* settings */
-        JButton settingsButton = new JButton("Game.Screens.Settings");
+        JButton settingsButton = new JButton("Settings");
 
         settingsButton.setFont(new Font("Serif", Font.PLAIN, 30));
         settingsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -70,8 +64,8 @@ public class WelcomeScreen {
         settingsButton.setFocusPainted(false);
 
         settingsButton.addActionListener(e -> {
-            new Game.Screens.Settings();
-            frame.dispose();
+            // Změna 5: Přepnutí do nastavení přes ScreenManager
+            screen.showSettingsScreen();
         });
 
         /* exit */
@@ -85,7 +79,10 @@ public class WelcomeScreen {
         exitButton.setBackground(AppSettings.getBackgroundColor());
         exitButton.setFocusPainted(false);
 
-        exitButton.addActionListener(e -> frame.dispose());
+        exitButton.addActionListener(e -> {
+            // Změna 6: Vypnutí celé aplikace, jelikož okno spravuje manager
+            System.exit(0);
+        });
 
         /* mezery */
         centerPanel.add(Box.createVerticalStrut(80));
@@ -95,18 +92,19 @@ public class WelcomeScreen {
         centerPanel.add(Box.createVerticalStrut(15));
         centerPanel.add(exitButton);
 
-        frame.add(centerPanel, BorderLayout.CENTER);
+        // Přidáváme na this panel
+        add(centerPanel, BorderLayout.CENTER);
 
         // SPODNÍ PANEL
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         bottomPanel.setBackground(AppSettings.getBackgroundColor());
         JLabel footer = new JLabel("© 2026 moje apka");
         bottomPanel.add(footer);
-        frame.getContentPane().setBackground(AppSettings.getBackgroundColor());
 
-        frame.add(bottomPanel, BorderLayout.SOUTH);
+        // Změna 7: Nastavení pozadí rovnou tomuto panelu
+        setBackground(AppSettings.getBackgroundColor());
 
-        frame.setVisible(true);
+        // Přidáváme na this panel
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 }
-

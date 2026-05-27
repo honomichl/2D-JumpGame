@@ -7,21 +7,19 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 /**
- * Hlavní obrazovka levelu. Funguje jako obal pro GamePanel (samotnou hru)
- * a stará se o zachytávání vstupů z klávesnice.
+ * Hlavní obrazovka levelu. Funguje jako pasivní obal pro GamePanel.
  */
-public class Level extends JPanel {
+public class GameScreen extends JPanel {
 
     private GamePanel gamePanel;
 
-    public Level(JFrame frame) {
-        this.setLayout(new BorderLayout());
-        this.setFocusable(true);
+    public GameScreen() {
+        setLayout(new BorderLayout());
 
         gamePanel = new GamePanel();
-        this.add(gamePanel, BorderLayout.CENTER);
+        add(gamePanel, BorderLayout.CENTER);
 
-        // skakani
+        /** reacts on space by making player jump */
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {

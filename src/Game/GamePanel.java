@@ -18,97 +18,19 @@ public class GamePanel extends JPanel implements ActionListener {
     private int cameraX = 0;
     private final int GAME_SPEED = 7;
 
-    // Herní entity a objekty
     private Player player;
     private ArrayList<Spike> spikes;
     private ArrayList<Block> blocks;
     private ArrayList<Floor> floors;
 
     public GamePanel() {
-        // Nastavení průhlednosti pozadí (barvu si můžeš brát z AppSettings)
         this.setBackground(AppSettings.getBackgroundColor());
         this.setFocusable(true);
 
-        spikes = new ArrayList<>();
-        blocks = new ArrayList<>();
-        floors = new ArrayList<>();
+        boolean success = LevelReader.loadLevel("/LevelLibrary.json", this);
 
-        // Načtení řádků z JSONu přes tvůj Reader
-        ArrayList<String> radky = LevelReader.loadLevelLines("/LevelLibrary.json");
+        startGame();
 
-        if (radky != null) {
-            for (int r = 0; r < radky.size(); r++) {
-                String radek = radky.get(r);
-
-                for (int c = 0; c < radek.length(); c++) {
-                    char znak = radek.charAt(c);
-                    int x = c * 40;
-                    int y = r * 40;
-
-                    if (znak == 'P') {
-                        this.player = new Player(150, y);
-                    } else if (znak == 'b') {
-                        blocks.add(new Block(x, y));
-                    } else if (znak == 's') {
-                        spikes.add(new Spike(x, y));
-                    } else if (znak == '=') {
-                        floors.add(new Floor(x, y));
-                    }
-                }
-            }
-        }
-
-        // Pojistka, kdyby hráč v JSONu chyběl
-        if (this.player == null) {
-            this.player = new Player(150, 360);
-        }
-
-        // Nastartování herní smyčky (16ms = ~60 FPS)
-        timer = new Timer(16, this);
-        timer.start();
-    }
-
-    /**
-     * Spustí nebo obnoví hru (vhodné pro zrušení pauzy).
-     */
-    public void startGame() {
-        if (timer != null && !timer.isRunning()) {
-            timer.start();
-        }
-    }
-
-    /**
-     * Zastaví hru (vhodné pro aktivaci pauzy).
-     */
-    public void stopGame() {
-        if (timer != null && timer.isRunning()) {
-            timer.stop();
-        }
-    }
-
-    /**
-     * Vrací informaci, zda hra momentálně běží (nebo je pozastavená).
-     */
-    public boolean isRunning() {
-        return timer != null && timer.isRunning();
-    }
-
-    /**
-     * Resetuje pozici hráče a kamery při úmrtí.
-     */
-    public void resetGameValues() {
-        player.reset(360);
-        cameraX = 0;
-    }
-
-    /**
-     * Vyvolá skok hráče. Tuto metodu bude volat LevelScreen,
-     * když zachytí stisknutí mezerníku.
-     */
-    public void makePlayerJump() {
-        if (player != null) {
-            player.jump();
-        }
     }
 
     /* LOGIKA HRY – TIKÁNÍ TIMERU */
@@ -117,14 +39,11 @@ public class GamePanel extends JPanel implements ActionListener {
         player.updateMovement();
         cameraX += GAME_SPEED;
 
-        // Kontrola smrti (náraz do spiku nebo čelně do bloku)
-        if (Collisions.checkDeathCollisions(player, spikes, blocks, cameraX)) {
+        /** checks for death */
+        if (Collisions.checkDeathCollision(player, spikes, blocks, floors, cameraX)) {
             resetGameValues();
-            // Tady bys mohl v budoucnu přes nějaký callback říct LevelScreenu,
-            // aby navýšil pokusy (attempts++), které se kreslí v UI.
         }
 
-        // Kontrola bezpečného přistání na blocích a podlahách
         Collisions.handleLanding(player, blocks, floors, cameraX);
 
         repaint();
@@ -137,7 +56,21 @@ public class GamePanel extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        /* 1. Mřížka pozadí */
+        /** game objects */
+        for (Floor floor : floors) {
+            floor.draw(g2d, cameraX);
+        }
+        for (Block block : blocks) {
+            block.draw(g2d, cameraX);
+        }
+        for (Spike spike : spikes) {
+            spike.draw(g2d, cameraX);
+        }
+
+        /** player */
+        player.draw(g2d);
+
+        /** temporary background grid */
         g2d.setColor(new Color(128, 128, 128, 50));
         int gridSize = 40;
         int offsetX = cameraX % gridSize;
@@ -149,21 +82,7 @@ public class GamePanel extends JPanel implements ActionListener {
             g2d.drawLine(0, y, getWidth(), y);
         }
 
-        /* 2. Vykreslení herních objektů */
-        for (Floor floor : floors) {
-            floor.draw(g2d, cameraX);
-        }
-        for (Block block : blocks) {
-            block.draw(g2d, cameraX);
-        }
-        for (Spike spike : spikes) {
-            spike.draw(g2d, cameraX);
-        }
-
-        /* 3. Vykreslení hráče */
-        player.draw(g2d);
-
-        /* 4. Hitboxy pro ladění (zelené) */
+        /** temporary hitboxes */
         g2d.setColor(Color.GREEN);
         g2d.draw(player.getHitbox());
 
@@ -178,5 +97,80 @@ public class GamePanel extends JPanel implements ActionListener {
             g2d.draw(floor.getHitbox());
         }
         g2d.translate(cameraX, 0);
+    }
+
+    /** creates and starts the timer */
+    public void startGame() {
+        timer = new Timer(16, this);
+        timer.start();
+    }
+
+
+    /** starts a timer */
+    public void startTimer() {
+        if (timer != null && !timer.isRunning()) {
+            timer.start();
+        }
+    }
+
+    /** stops a timer */
+    public void stopTimer() {
+        if (timer != null && timer.isRunning()) {
+            timer.stop();
+        }
+    }
+
+    /** resets player position and camera */
+    public void resetGameValues() {
+        player.reset();
+        cameraX = 0;
+    }
+
+    /** calls for player to jump */
+    public void makePlayerJump() {
+        player.jump();
+    }
+
+    /** Getters */
+    public Timer getTimer() {
+        return timer;
+    }
+    public int getCameraX() {
+        return cameraX;
+    }
+    public int getGAME_SPEED() {
+        return GAME_SPEED;
+    }
+    public Player getPlayer() {
+        return player;
+    }
+    public ArrayList<Spike> getSpikes() {
+        return spikes;
+    }
+    public ArrayList<Block> getBlocks() {
+        return blocks;
+    }
+    public ArrayList<Floor> getFloors() {
+        return floors;
+    }
+
+    /** Setters */
+    public void setTimer(Timer timer) {
+        this.timer = timer;
+    }
+    public void setCameraX(int cameraX) {
+        this.cameraX = cameraX;
+    }
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+    public void setSpikes(ArrayList<Spike> spikes) {
+        this.spikes = spikes;
+    }
+    public void setBlocks(ArrayList<Block> blocks) {
+        this.blocks = blocks;
+    }
+    public void setFloors(ArrayList<Floor> floors) {
+        this.floors = floors;
     }
 }

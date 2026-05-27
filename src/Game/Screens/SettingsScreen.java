@@ -5,31 +5,31 @@ import Game.*;
 import javax.swing.*;
 import java.awt.*;
 
-public class Settings {
+//TODO zhezcit
 
-    private JFrame frame;
+// Změna 1: Třída je teď JPanel, ne samostatné okno
+public class SettingsScreen extends JPanel {
 
-    public Settings() {
+    private ScreenManager screen;
 
-        frame = new JFrame("Game.Settings");
+    public SettingsScreen(ScreenManager screen) {
+        this.screen = screen;
 
-        frame.setSize(800, 600);
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
+        // Změna 2: Smazán kód pro JFrame, nastavujeme rovnou tento panel
+        setLayout(new BorderLayout());
 
         // HORNÍ PANEL
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         topPanel.setBackground(AppSettings.getBackgroundColor());
 
-        JLabel label = new JLabel("Game.Settings");
+        JLabel label = new JLabel("Game.SettingsScreen");
         label.setFont(new Font("Serif", Font.BOLD, 30));
         label.setForeground(AppSettings.getForegroundColor());
 
         topPanel.add(label);
 
-        frame.add(topPanel, BorderLayout.NORTH);
+        // Přidáváme rovnou na tento panel (this.add místo frame.add)
+        add(topPanel, BorderLayout.NORTH);
 
         // STŘED
         JPanel centerPanel = new JPanel();
@@ -80,15 +80,14 @@ public class Settings {
         saveButton.setFocusPainted(false);
 
         saveButton.addActionListener(e -> {
-
             AppSettings.setUsername(usernameField.getText());
             AppSettings.setTheme((String) themeBox.getSelectedItem());
 
-            System.out.println("Game.Screens.Settings uložené:");
+            System.out.println("Game.Screens.SettingsScreen uložené:");
             System.out.println(AppSettings.getUsername() + " | " + AppSettings.getTheme());
 
-            new WelcomeScreen();
-            frame.dispose();
+            // Změna 3: Návrat do menu přes ScreenManager bez otevírání nového okna
+            screen.showWelcomeScreen();
         });
 
         // BACK BUTTON
@@ -102,8 +101,8 @@ public class Settings {
         backButton.setFocusPainted(false);
 
         backButton.addActionListener(e -> {
-            new Game.Screens.WelcomeScreen();
-            frame.dispose();
+            // Změna 4: Návrat do menu přes ScreenManager
+            screen.showWelcomeScreen();
         });
 
         // LAYOUT
@@ -122,8 +121,7 @@ public class Settings {
         centerPanel.add(Box.createVerticalStrut(15));
         centerPanel.add(backButton);
 
-        frame.add(centerPanel, BorderLayout.CENTER);
-
-        frame.setVisible(true);
+        // Přidáváme rovnou na tento panel
+        add(centerPanel, BorderLayout.CENTER);
     }
 }

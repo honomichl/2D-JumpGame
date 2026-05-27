@@ -6,30 +6,30 @@ import java.awt.*;
  * Reprezentuje žlutou kostku (hráče), její stav, fyziku pohybu a skákání.
  */
 public class Player {
-
-    // Pozice a rozměry hráče (Pevné měřítko 40x40 px)
-    private final int x;
+    private int x;
+    private final int startX;
     private int y;
+    private final int startY;
     private final int size = 40;
 
-    // Fyzikální konstanty a proměnné
     private final int GRAVITY = 1;
     private final double JUMP_FORCE = -14;
     private double jumpSpeed = 0;
     private boolean onGround = true;
 
     /**
-     * Konstruktor hráče.
-     * @param startX Fixní pozice X na obrazovce (např. 150)
-     * @param startY Počáteční výška načtená z JSONu
+     * constructor of player.
+     * Sets starting cordinates and assignes them to the temporary ones.
      */
     public Player(int startX, int startY) {
         this.x = startX;
         this.y = startY;
+        this.startX = startX;
+        this.startY = startY;
     }
 
     /**
-     * Vyvolá skok, pokud se hráč nachází na zemi.
+     * makes a player jump if he is on the ground
      */
     public void jump() {
         if (onGround) {
@@ -39,7 +39,7 @@ public class Player {
     }
 
     /**
-     * Aktualizuje pohyb hráče v každém herním ticku (aplikuje gravitaci).
+     * updates player speed on the Y axis
      */
     public void updateMovement() {
         this.jumpSpeed += GRAVITY;
@@ -47,68 +47,61 @@ public class Player {
     }
 
     /**
-     * Resetuje stav hráče na výchozí hodnoty při úmrtí.
-     * @param defaultY Výchozí bezpečná výška (např. 360)
+     * Resets player attributes
      */
-    public void reset(int defaultY) {
-        this.y = defaultY;
+    public void reset() {
+        this.y = startY;
+        this.x = startX;
         this.jumpSpeed = 0;
-        this.onGround = true;
+        this.onGround = false;
     }
 
     /**
      * Vykreslí žlutou kostku hráče a její černý obrys.
      */
     public void draw(Graphics2D g2d) {
-        // Žlutá výplň
         g2d.setColor(Color.YELLOW);
         g2d.fillRect(x, y, size, size);
 
-        // Černý obrys podle nastavení hry
         g2d.setColor(AppSettings.getForegroundColor());
         g2d.drawRect(x, y, size, size);
     }
 
     /**
-     * Vrátí aktuální hitbox hráče na obrazovce (pro zelené kreslení i kolize).
+     * returns hitbox of player
      */
     public Rectangle getHitbox() {
         return new Rectangle(x, y, size, size);
     }
 
-    // ==========================================
-    //  GETTERY A SETTERY
-    // ==========================================
-
+    /** Getters */
     public int getX() {
         return x;
     }
-
     public int getY() {
         return y;
     }
-
     public void setY(int y) {
         this.y = y;
     }
-
     public double getJumpSpeed() {
         return jumpSpeed;
     }
-
     public void setJumpSpeed(double jumpSpeed) {
         this.jumpSpeed = jumpSpeed;
     }
-
     public boolean isOnGround() {
         return onGround;
     }
-
-    public void setOnGround(boolean onGround) {
-        this.onGround = onGround;
-    }
-
     public int getSize() {
         return size;
+    }
+    public double getJUMP_FORCE() {
+        return JUMP_FORCE;
+    }
+
+    /** Setters */
+    public void setOnGround(boolean onGround) {
+        this.onGround = onGround;
     }
 }
