@@ -100,4 +100,15 @@ public class Collisions {
             }
         }
     }
+
+    /** checks if player reached the end */
+    public static boolean theEnd(Player player, End end, int cameraX) {
+        if (end == null) {
+            return false;
+        }
+
+        Rectangle playerWorldBox = new Rectangle(player.getX() + cameraX, player.getY(), player.getSize(), player.getSize());
+
+        return playerWorldBox.intersects(end.getHitbox());
+    }
 }

@@ -10,7 +10,6 @@ public class Main {
 //TODO hitbox spiku
 //TODO mini hitbox hrace
 //TODO animace
-//TODO konec
 //TODO stop menu
 //TODO error screen
 //TODO textury
@@ -20,13 +19,13 @@ public class Main {
 //TODO vyhra screen
 //TODO pokusy a scorebar
 //TODO pisnicka
+//TODO vic settings
+//TODO strop spravne rozsirovani
+//TODO ikonka
 //TODO skiny?
 //TODO portaly?
 //TODO superjump?
 //TODO vic levelu?
 //TODO menu levelu?
-//TODO vic settings
-
-
 
 

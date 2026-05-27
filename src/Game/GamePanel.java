@@ -16,12 +16,13 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private Timer timer;
     private int cameraX = 0;
-    private final int GAME_SPEED = 7;
+    private final int GAME_SPEED = 8;
 
     private Player player;
     private ArrayList<Spike> spikes;
     private ArrayList<Block> blocks;
     private ArrayList<Floor> floors;
+    private End end;
 
     public GamePanel() {
         this.setBackground(AppSettings.getBackgroundColor());
@@ -38,6 +39,12 @@ public class GamePanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         player.updateMovement();
         cameraX += GAME_SPEED;
+
+        /** checks if player reached the end */
+        if (Collisions.theEnd(player, this.end, cameraX)) {
+            stopTimer();
+            System.out.println("LEVEL DOKONČEN! Vyhrál jsi.");
+        }
 
         /** checks for death */
         if (Collisions.checkDeathCollision(player, spikes, blocks, floors, cameraX)) {
@@ -66,6 +73,7 @@ public class GamePanel extends JPanel implements ActionListener {
         for (Spike spike : spikes) {
             spike.draw(g2d, cameraX);
         }
+        end.draw(g2d, cameraX);
 
         /** player */
         player.draw(g2d);
@@ -173,4 +181,5 @@ public class GamePanel extends JPanel implements ActionListener {
     public void setFloors(ArrayList<Floor> floors) {
         this.floors = floors;
     }
+    public void setEnd(End end) {this.end = end;}
 }

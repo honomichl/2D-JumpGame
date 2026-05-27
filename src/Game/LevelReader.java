@@ -45,10 +45,11 @@ public class LevelReader {
         ArrayList<String> radky = loadLevelLines(path);
 
         /** temporary lists */
+        Player tempPlayer = null;
         ArrayList<Block> tempBlocks = new ArrayList<>();
         ArrayList<Spike> tempSpikes = new ArrayList<>();
         ArrayList<Floor> tempFloors = new ArrayList<>();
-        Player tempPlayer = null;
+        End tempEnd = null;
 
         if (radky == null) {
             return false;
@@ -70,6 +71,8 @@ public class LevelReader {
                     tempSpikes.add(new Spike(x, y));
                 } else if (znak == '=' ) {
                     tempFloors.add(new Floor(x, y));
+                } else if (znak == 'e') {
+                    tempEnd = new End(x);
                 }
             }
         }
@@ -84,6 +87,7 @@ public class LevelReader {
         panel.setBlocks(tempBlocks);
         panel.setSpikes(tempSpikes);
         panel.setFloors(tempFloors);
+        panel.setEnd(tempEnd);
         return true;
     }
 }
