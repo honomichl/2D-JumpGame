@@ -6,7 +6,6 @@ public class Main {
     }
 }
 
-//TODO upravit collisions
 //TODO upravit ws a ss
 //TODO animace
 //TODO stop menu

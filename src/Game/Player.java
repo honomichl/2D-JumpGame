@@ -10,7 +10,7 @@ public class Player {
     private static final double JUMP_FORCE = -14;
     private static final int size = 40;
 
-    private final int offset = 10;
+    private final int offset = 13;
     private final Rectangle bigHitbox;
     private final Rectangle smallHitbox;
 

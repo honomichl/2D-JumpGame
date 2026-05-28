@@ -16,7 +16,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private Timer timer;
     private int cameraX = 0;
-    private final int GAME_SPEED = 8;
+    private final int GAME_SPEED = 7;
 
     private Player player;
     private ArrayList<Spike> spikes;
