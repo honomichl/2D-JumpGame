@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * kolize a vykreslování samotné hry. Neřeší herní menu ani pauzu.
  */
 public class GamePanel extends JPanel implements ActionListener {
-
+    private boolean isPaused = false;
     private Timer timer;
     private int cameraX = 0;
     private final int GAME_SPEED = 7;
@@ -37,6 +37,9 @@ public class GamePanel extends JPanel implements ActionListener {
     /* LOGIKA HRY – TIKÁNÍ TIMERU */
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (isPaused) {
+            return;
+        }
         player.updateMovement();
         cameraX += GAME_SPEED;
 
@@ -108,6 +111,16 @@ public class GamePanel extends JPanel implements ActionListener {
             g2d.draw(floor.getHitbox());
         }
         g2d.translate(cameraX, 0);
+
+        if (isPaused) {
+            g2d.setColor(new Color(0,0,0,150));
+            g2d.fillRect(0, 0, getWidth(), getHeight());
+        }
+    }
+
+    public void togglePause() {
+        this.isPaused = !this.isPaused;
+        repaint();
     }
 
     /** creates and starts the timer */
@@ -163,6 +176,9 @@ public class GamePanel extends JPanel implements ActionListener {
     }
     public ArrayList<Floor> getFloors() {
         return floors;
+    }
+    public boolean isPaused() {
+        return isPaused;
     }
 
     /** Setters */

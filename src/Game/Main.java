@@ -8,8 +8,6 @@ public class Main {
 
 //TODO upravit ws a ss
 //TODO animace
-//TODO stop menu
-//TODO error screen
 //TODO textury
 //TODO jmena atributu
 //TODO readme

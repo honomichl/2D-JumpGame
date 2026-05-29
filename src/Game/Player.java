@@ -73,7 +73,7 @@ public class Player {
      * Vykreslí žlutou kostku hráče a její černý obrys.
      */
     public void draw(Graphics2D g2d) {
-        g2d.setColor(Color.YELLOW);
+        g2d.setColor(Color.MAGENTA);
         g2d.fillRect(x, y, size, size);
 
         g2d.setColor(AppSettings.getForegroundColor());
