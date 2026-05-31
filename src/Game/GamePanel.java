@@ -14,6 +14,7 @@ import java.util.ArrayList;
  */
 public class GamePanel extends JPanel implements ActionListener {
     private boolean isPaused = false;
+    private Runnable onWin;
     private Timer timer;
     private int cameraX = 0;
     private final int GAME_SPEED = 7;
@@ -46,7 +47,8 @@ public class GamePanel extends JPanel implements ActionListener {
         /** checks if player reached the end */
         if (Collisions.theEnd(player, this.end, cameraX)) {
             stopTimer();
-            System.out.println("LEVEL DOKONČEN! Vyhrál jsi.");
+            onWin.run();
+            return;
         }
 
         /** checks for death */
@@ -200,5 +202,10 @@ public class GamePanel extends JPanel implements ActionListener {
     public void setFloors(ArrayList<Floor> floors) {
         this.floors = floors;
     }
-    public void setEnd(End end) {this.end = end;}
+    public void setEnd(End end) {
+        this.end = end;
+    }
+    public void setOnWin(Runnable onWin) {
+        this.onWin = onWin;
+    }
 }

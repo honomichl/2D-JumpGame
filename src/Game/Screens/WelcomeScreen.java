@@ -36,7 +36,7 @@ public class WelcomeScreen extends JPanel {
 
         /** down panel */
         JPanel bottomPanel = UIFactory.createFlowLayout();
-        bottomPanel.add(new JLabel("© 2026 moje apka"));
+        bottomPanel.add(UIFactory.createLabel("© 2026 moje apka"));
         add(bottomPanel, BorderLayout.SOUTH);
     }
 }

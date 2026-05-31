@@ -3,7 +3,7 @@ package Game;
 import Game.Screens.*;
 import Game.Screens.GameScreen;
 import Game.Screens.WelcomeScreen;
-import Game.Screens.SettingsScreen; // Předpokládám tento balíček
+import Game.Screens.SettingsScreen;
 import javax.swing.*;
 
 /**
@@ -14,7 +14,6 @@ public class ScreenManager {
 
     /** creates the screen in which other screens will be projected */
     public ScreenManager() {
-        // 1. Okno se vytvoří POUZE JEDNOU při startu
         window = new JFrame("Geometry Dash Clone");
         window.setSize(800, 600);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -37,7 +36,14 @@ public class ScreenManager {
 
     /** shows Game screen and makes it focused */
     public void showGameScreen() {
-        GameScreen screen = new GameScreen();
+        GameScreen screen = new GameScreen(this);
+        changeScreen(screen);
+
+        screen.requestFocusInWindow();
+    }
+
+    public void showVictoryScreen() {
+        VictoryScreen screen = new VictoryScreen(this);
         changeScreen(screen);
 
         screen.requestFocusInWindow();

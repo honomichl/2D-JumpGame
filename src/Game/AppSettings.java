@@ -5,7 +5,7 @@ import java.awt.*;
 public class AppSettings {
 
     // výchozí hodnoty
-    private static String username = "Game.Player";
+    private static String username = "Player";
     private static String theme = "Light";
 
     public static Color getBackgroundColor() {

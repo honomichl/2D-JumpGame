@@ -14,8 +14,13 @@ public class GameScreen extends JPanel {
     private final GamePanel gamePanel = new GamePanel();
     private final JPanel pauseMenu = new JPanel();
     private final JLayeredPane layeredPane = new JLayeredPane();
+    private final ScreenManager screenManager;
 
-    public GameScreen() {
+    public GameScreen(ScreenManager screen) {
+        this.screenManager = screen;
+
+        gamePanel.setOnWin(screenManager::showVictoryScreen);
+
         setLayout(new BorderLayout());
         add(layeredPane, BorderLayout.CENTER);
         gamePanel.setBounds(0, 0, 800, 600);
