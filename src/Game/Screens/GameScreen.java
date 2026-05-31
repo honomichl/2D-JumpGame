@@ -57,54 +57,40 @@ public class GameScreen extends JPanel {
     }
 
     private void initPauseMenu() {
-        pauseMenu.setLayout(new BoxLayout(pauseMenu, BoxLayout.Y_AXIS));
+        pauseMenu.setLayout(new BorderLayout());
         pauseMenu.setOpaque(false);
         pauseMenu.setFocusable(true);
 
-        JLabel pauseLabel = new JLabel("PAUSE");
-        pauseLabel.setFont(new Font("Serif", Font.BOLD, 50));
-        pauseLabel.setForeground(AppSettings.getForegroundColor());
-        pauseLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        /** top panel */
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        topPanel.setOpaque(false);
+        topPanel.add(UIFactory.createTitle("Pause menu"));
 
-        /** resume button */
-        JButton resumeButton = new JButton("resume");
+        pauseMenu.add(topPanel, BorderLayout.NORTH);
 
-        resumeButton.setFont(new Font("Serif", Font.PLAIN, 30));
-        resumeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        resumeButton.setMaximumSize(new Dimension(200, 60));
+        /** center panel */
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.setOpaque(false);
 
-        resumeButton.setForeground(AppSettings.getForegroundColor());
-        resumeButton.setBackground(AppSettings.getBackgroundColor());
-        resumeButton.setFocusPainted(false);
+        JButton resumeButton = UIFactory.createButton("Resume");
         resumeButton.setFocusable(true);
 
-        resumeButton.addActionListener(e -> {
-            togglePauseScreen();
-        });
-
-        /** restart button */
-        JButton restartButton = new JButton("reset level");
-
-        restartButton.setFont(new Font("Serif", Font.PLAIN, 30));
-        restartButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        restartButton.setMaximumSize(new Dimension(200, 60));
-
-        restartButton.setForeground(AppSettings.getForegroundColor());
-        restartButton.setBackground(AppSettings.getBackgroundColor());
-        restartButton.setFocusPainted(false);
+        JButton restartButton = UIFactory.createButton("Reset level");
         restartButton.setFocusable(true);
 
+        resumeButton.addActionListener(e -> togglePauseScreen());
         restartButton.addActionListener(e -> {
             gamePanel.resetGameValues();
             togglePauseScreen();
         });
 
-        pauseMenu.add(Box.createVerticalGlue());
-        pauseMenu.add(pauseLabel);
-        pauseMenu.add(Box.createVerticalStrut(30));
-        pauseMenu.add(resumeButton);
-        pauseMenu.add(Box.createVerticalStrut(15));
-        pauseMenu.add(restartButton);
-        pauseMenu.add(Box.createVerticalGlue());
+        centerPanel.add(Box.createVerticalStrut(100));
+        centerPanel.add(resumeButton);
+        centerPanel.add(Box.createVerticalStrut(15));
+        centerPanel.add(restartButton);
+        centerPanel.add(Box.createVerticalGlue());
+
+        pauseMenu.add(centerPanel, BorderLayout.CENTER);
     }
 }

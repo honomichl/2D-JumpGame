@@ -6,7 +6,6 @@ public class Main {
     }
 }
 
-//TODO upravit ws a ss
 //TODO animace
 //TODO textury
 //TODO jmena atributu
@@ -14,14 +13,6 @@ public class Main {
 //TODO popisky
 //TODO vyhra screen
 //TODO pokusy a scorebar
-//TODO pisnicka
 //TODO vic settings
 //TODO strop spravne rozsirovani
 //TODO ikonka
-//TODO skiny?
-//TODO portaly?
-//TODO superjump?
-//TODO vic levelu?
-//TODO menu levelu?
-
-

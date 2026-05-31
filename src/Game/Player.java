@@ -70,7 +70,7 @@ public class Player {
     }
 
     /**
-     * Vykreslí žlutou kostku hráče a její černý obrys.
+     * draws a player
      */
     public void draw(Graphics2D g2d) {
         g2d.setColor(Color.MAGENTA);
