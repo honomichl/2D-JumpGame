@@ -4,8 +4,18 @@ import Game.*;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Settings screen panel that allows the user to configure game preferences.
+ * It provides options to change the username and select the visual theme.
+ *
+ * @author Filip Honomichl
+ */
 public class SettingsScreen extends JPanel {
 
+    /**
+     * Constructor that sets up the settings form with input fields,
+     * dropdowns, and buttons to save configuration or return to the menu.
+     */
     public SettingsScreen(ScreenManager screen) {
         setLayout(new BorderLayout());
         setBackground(AppSettings.getBackgroundColor());

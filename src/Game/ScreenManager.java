@@ -7,14 +7,17 @@ import Game.Screens.SettingsScreen;
 import javax.swing.*;
 
 /**
- * Hlavní manažer aplikace. Řídí jedno okno a přepíná v něm scény.
+ * The main window manager for the application. It controls the game window
+ * frame and handles switching between different panels and menus.
+ *
+ * @author Filip Honomichl
  */
 public class ScreenManager {
     private JFrame window;
 
     /** creates the screen in which other screens will be projected */
     public ScreenManager() {
-        window = new JFrame("Geometry Dash Clone");
+        window = new JFrame("2D_JumpGame");
         window.setSize(800, 600);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
@@ -42,6 +45,9 @@ public class ScreenManager {
         screen.requestFocusInWindow();
     }
 
+    /**
+     * Swaps the current view with the victory panel and makes it focused.
+     */
     public void showVictoryScreen() {
         VictoryScreen screen = new VictoryScreen(this);
         changeScreen(screen);

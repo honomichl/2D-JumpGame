@@ -7,7 +7,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 /**
- * Hlavní obrazovka levelu. Funguje jako pasivní obal pro GamePanel.
+ * Main game screen panel that acts as a wrapper for the core gameplay area.
+ * It manages HUD overlay, game layering, and inputs for jumping or pausing.
+ *
+ * @author Filip Honomichl
  */
 public class GameScreen extends JPanel {
 
@@ -19,6 +22,10 @@ public class GameScreen extends JPanel {
     private final JLabel progressLabel = UIFactory.createLabel("");
     private final JLabel attemptsLabel = UIFactory.createLabel("");
 
+    /**
+     * Constructor that sets up the layered window structure, displays HUD statistics,
+     * hooks game events to the user interface, and initializes input controls.
+     */
     public GameScreen(ScreenManager screen) {
         this.screenManager = screen;
 
@@ -69,6 +76,10 @@ public class GameScreen extends JPanel {
         });
     }
 
+    /**
+     * Toggles the gameplay pause status and alters the screen view
+     * so that the game behind is less visible and stopped.
+     */
     private void togglePauseScreen() {
         gamePanel.togglePause();
 
@@ -84,6 +95,10 @@ public class GameScreen extends JPanel {
         layeredPane.repaint();
     }
 
+    /**
+     * Builds and styles the layout of the pause overlay component,
+     * preparing buttons for continuing, resetting, or navigating back.
+     */
     private void initPauseMenu() {
         pauseMenu.setLayout(new BorderLayout());
         pauseMenu.setOpaque(false);

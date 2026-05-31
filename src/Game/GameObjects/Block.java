@@ -7,6 +7,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+/**
+ * Represents a standard static block object in the game world that the player
+ * can land on or crash into. It handles its own positioning, hitbox, and texture.
+ *
+ * @author Filip Honomichl
+ */
 public class Block {
     private final int x;
     private final int y;
@@ -15,6 +21,10 @@ public class Block {
     private BufferedImage img;
 
 
+    /**
+     * Constructor that sets up the block's coordinates, creates its collision
+     * hitbox, and attempts to load its visual sprite image.
+     */
     public Block(int x, int y) {
         this.x = x;
         this.y = y;
@@ -24,6 +34,10 @@ public class Block {
         } catch (IOException e) { e.printStackTrace(); }
     }
 
+    /**
+     * Draws the block asset on the screen, shifting its horizontal position
+     * based on the current camera movement to simulate scrolling.
+     */
     public void draw(Graphics2D g2d, int cameraX) {
         if (img != null) {
             g2d.drawImage(img, x - cameraX, y, 40, 40, null);

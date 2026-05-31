@@ -4,8 +4,19 @@ import Game.*;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * The screen that pops up when a player successfully beats a level.
+ * It shows a congratulatory message and gives options to replay,
+ * go back to the main menu, or quit.
+ *
+ * @author Filip Honomichl
+ */
 public class VictoryScreen extends JPanel {
 
+    /**
+     * Sets up the layout, displays the victory title, and configures
+     * the buttons for restarting, viewing the menu, or exiting.
+     */
     public VictoryScreen(ScreenManager screen) {
         setLayout(new BorderLayout());
         setBackground(AppSettings.getBackgroundColor());

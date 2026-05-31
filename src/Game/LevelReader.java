@@ -1,4 +1,3 @@
-
 package Game;
 
 import Game.GameObjects.*;
@@ -9,6 +8,12 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
+/**
+ * Helper class that reads level layouts from JSON configuration files.
+ * It parses text grids and translates characters into actual game objects.
+ *
+ * @author Filip Honomichl
+ */
 public class LevelReader {
 
     private static class JsonStructure {
@@ -16,13 +21,13 @@ public class LevelReader {
     }
 
     /**
-     * loads data from json file using gson
-     * returns String Arraylist of obstacles
+     * Connects to the specified JSON file, reads its raw content, 
+     * and uses Gson to map it into a list of text rows representing the layout.
      */
     public static ArrayList<String> loadLevelLines(String resourcePath) {
         Gson gson = new Gson();
         try (InputStream is = LevelReader.class.getResourceAsStream(resourcePath)) {
-            if (is == null) throw new IllegalStateException("Soubor nenalezen: " + resourcePath);
+            if (is == null) throw new IllegalStateException("File not found: " + resourcePath);
 
             JsonStructure data = gson.fromJson(
                     new InputStreamReader(is, StandardCharsets.UTF_8),
@@ -30,16 +35,13 @@ public class LevelReader {
             );
             return data.level1;
         } catch (Exception e) {
-            throw new RuntimeException("Chyba při načítání: " + e.getMessage());
+            throw new RuntimeException("Error: " + e.getMessage());
         }
     }
 
     /**
-     * Processes level data from {@link #loadLevelLines(String)}.
-     *
-     * Scans the lines character by character to identify and map objects
-     * ('P' for player, 'b' for blocks, 's' for spikes, '=' for floors)
-     * into temporary lists, then saves them to GamePanel.
+     * Loops through the rows and characters of a loaded level file. It converts letters 
+     * like 'P', 'b', 's', or '=' into objects at grid coordinates, and loads them into the game canvas.
      */
     public static boolean loadLevel(String path, GamePanel panel) {
         ArrayList<String> radky = loadLevelLines(path);
@@ -76,7 +78,6 @@ public class LevelReader {
                 }
             }
         }
-
 
         if (tempPlayer == null || tempBlocks.isEmpty() && tempSpikes.isEmpty()) {
             return false;

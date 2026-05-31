@@ -5,6 +5,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+/**
+ * Represents a solid floor segment in the game world. It stretches vertically
+ * downwards to prevent the player from falling out of bounds and provides
+ * a stable surface to run on.
+ *
+ * @author Filip Honomichl
+ */
 public class Floor {
     private final int x;
     private final int y;
@@ -14,6 +21,10 @@ public class Floor {
     private BufferedImage img;
 
 
+    /**
+     * Constructor that defines the floor's boundaries, positions its large vertical
+     * collision hitbox, and loads the surface texture image.
+     */
     public Floor(int x, int y) {
         this.x = x;
         this.y = y;
@@ -23,6 +34,10 @@ public class Floor {
         } catch (IOException e) { e.printStackTrace(); }
     }
 
+    /**
+     * Draws the floor asset on the screen, applying a horizontal offset based
+     * on the camera's position to handle smooth map scrolling.
+     */
     public void draw(Graphics2D g2d, int cameraX) {
         if (img != null) {
             for (int tx = x; tx < x + width; tx += 40) {

@@ -4,8 +4,17 @@ import Game.*;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Welcome screen panel that serves as the main menu of the game.
+ * It handles the visual layout and initialization of the main menu components.
+ * @author Filip Honomichl
+ */
 public class WelcomeScreen extends JPanel {
 
+    /**
+     * Constructor that sets up the panel layout, greeting title,
+     * navigation buttons with their actions, and the footer.
+     */
     public WelcomeScreen(ScreenManager screen) {
         setLayout(new BorderLayout());
         setBackground(AppSettings.getBackgroundColor());
@@ -36,7 +45,7 @@ public class WelcomeScreen extends JPanel {
 
         /** down panel */
         JPanel bottomPanel = UIFactory.createFlowLayout();
-        bottomPanel.add(UIFactory.createLabel("© 2026 moje apka"));
+        bottomPanel.add(UIFactory.createLabel("© 2026 author: Filip Honomichl"));
         add(bottomPanel, BorderLayout.SOUTH);
     }
 }

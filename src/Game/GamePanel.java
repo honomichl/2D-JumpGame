@@ -12,8 +12,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Samostatné herní plátno. Stará se o herní smyčku, logiku pohybu,
- * kolize a vykreslování samotné hry. Neřeší herní menu ani pauzu.
+ * Game canvas panel that drives the main game loop, movement physics,
+ * collision processing, and direct gameplay rendering.
+ *
+ * @author Filip Honomichl
  */
 public class GamePanel extends JPanel implements ActionListener {
     private boolean isPaused = false;
@@ -36,11 +38,15 @@ public class GamePanel extends JPanel implements ActionListener {
     boolean dying = false;
     int dyingTimer = 0;
 
+    /**
+     * Constructor that loads the level layout configuration, loads the background textures,
+     * sets up structural boundaries, and triggers the active loop timer.
+     */
     public GamePanel() {
         this.setBackground(AppSettings.getBackgroundColor());
         this.setFocusable(true);
 
-        boolean success = LevelReader.loadLevel("/LevelLibrary.json", this);
+        LevelReader.loadLevel("/LevelLibrary.json", this);
 
         if (end != null) {
             levelEnd = end.getX();
@@ -55,7 +61,10 @@ public class GamePanel extends JPanel implements ActionListener {
 
     }
 
-    /* LOGIKA HRY – TIKÁNÍ TIMERU */
+    /**
+     * Core update cycle triggered by the timer event. Advances player kinetics, camera positioning,
+     * evaluates death or victory states, and shows particle effects upon destruction.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (isPaused) {
@@ -102,7 +111,10 @@ public class GamePanel extends JPanel implements ActionListener {
         repaint();
     }
 
-    /* VYKRESLOVÁNÍ HERNÍHO SVĚTA */
+    /**
+     * Renders all visual elements onto the panel, tiling background assets,
+     * painting static structures, active entities, and drawing death particles.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -176,6 +188,8 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Pauses or unpauses the gameplay loop and refreshes the screen.     */
     public void togglePause() {
         this.isPaused = !this.isPaused;
         repaint();
@@ -214,6 +228,7 @@ public class GamePanel extends JPanel implements ActionListener {
         player.jump();
     }
 
+    /** Calculates how much of the level the player has completed as a percentage decimal. */
     public float getProgress() {
         return (float) cameraX / levelEnd;
     }

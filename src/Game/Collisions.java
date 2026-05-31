@@ -6,15 +6,17 @@ import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * Obsahuje čistě statické metody pro výpočet a řešení herních kolizí.
+ * Utility class filled with static methods to calculate and handle all in-game
+ * collision logic, such as landing on platforms, hitting spikes, or reaching the finish line.
+ *
+ * @author Filip Honomichl
  */
 public class Collisions {
     private static final int tolerance = 15;
 
     /**
-     * Kontroluje smrtelné kolize (náraz do spiku nebo čelní náraz do bloku).
-     *
-     * @return true, pokud hráč zemřel a level se musí resetovat.
+     * Checks if the player collided with something deadly, like a spike or
+     * running head-first into a wall, which requires a level reset.
      */
     public static boolean checkDeathCollision(Player player, ArrayList<Spike> spikes, ArrayList<Block> blocks, ArrayList<Floor> floors, int cameraX) {
         Rectangle deathHitbox = player.getSmallHitbox();
@@ -41,7 +43,6 @@ public class Collisions {
         /** deadly collisio with roof */
         for (Floor floor : floors) {
             if (playerWorldBox.intersects(floor.getHitbox())) {
-                // Opraveno: Stejná logika jako u bloku
                 if (!contactFromAbove(player, floor.getHitbox()) || contactFromBelow(player, floor.getHitbox())) {
                     return true;
                 }
@@ -51,8 +52,8 @@ public class Collisions {
     }
 
     /**
-     * ČISTĚ PŘISTÁNÍ ZDE: Řeší pouze bezpečné položení hráče na horní hranu bloků a podlah.
-     * Tato metoda nikoho nezabíjí, pouze zarovnává souřadnice.
+     * Handles safe landings by snapping the player coordinates to the top edge
+     * of a block or floor structure when falling onto them.
      */
     public static void handleLanding(Player player, ArrayList<Block> blocks, ArrayList<Floor> floors, int cameraX) {
         Rectangle landingHitbox = player.getBigHitbox();
@@ -101,10 +102,18 @@ public class Collisions {
         return playerWorldBox.intersects(end.getHitbox());
     }
 
+    /**
+     * Helper method checking if the player's downward trajectory originates
+     * from a position above the specified obstacle hitbox.
+     */
     public static boolean contactFromAbove(Player player, Rectangle obstacleHitbox) {
         return (player.getY() + player.getSize()) - player.getJumpSpeed() <= obstacleHitbox.getY() + tolerance;
     }
 
+    /**
+     * Helper method checking if the player is moving upward and hits the bottom
+     * of an obstacle.
+     */
     public static boolean contactFromBelow(Player player, Rectangle obstacleHitbox) {
         return player.getJumpSpeed() < 0 && player.getY() - player.getJumpSpeed() >= obstacleHitbox.y + obstacleHitbox.height - tolerance;
     }
