@@ -12,15 +12,15 @@ public class VictoryScreen extends JPanel {
 
         /** top panel */
         JPanel topPanel = UIFactory.createFlowLayout();
-        topPanel.add(UIFactory.createTitle("Gratuluju, vyhrál jsi!"));
+        topPanel.add(UIFactory.createTitle("You won, Congratulations!"));
         add(topPanel, BorderLayout.NORTH);
 
         /** center panel */
         JPanel centerPanel = UIFactory.createBoxLayout();
 
-        JButton playAgainButton = UIFactory.createButton("Hrát znovu");
+        JButton playAgainButton = UIFactory.createButton("Play Again");
         JButton menuButton = UIFactory.createButton("Menu");
-        JButton exitButton = UIFactory.createButton("Ukončit");
+        JButton exitButton = UIFactory.createButton("Exit");
 
         playAgainButton.addActionListener(e -> screen.showGameScreen());
         menuButton.addActionListener(e -> screen.showWelcomeScreen());

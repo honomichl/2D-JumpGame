@@ -18,6 +18,8 @@ public class GamePanel extends JPanel implements ActionListener {
     private Timer timer;
     private int cameraX = 0;
     private final int GAME_SPEED = 7;
+    private int attempts = 1;
+    private int levelEnd = 0;
 
     private Player player;
     private ArrayList<Spike> spikes;
@@ -30,6 +32,10 @@ public class GamePanel extends JPanel implements ActionListener {
         this.setFocusable(true);
 
         boolean success = LevelReader.loadLevel("/LevelLibrary.json", this);
+
+        if (end != null) {
+            levelEnd = end.getX();
+        }
 
         startGame();
 
@@ -150,6 +156,7 @@ public class GamePanel extends JPanel implements ActionListener {
     public void resetGameValues() {
         player.reset();
         cameraX = 0;
+        attempts++;
     }
 
     /** calls for player to jump */
@@ -157,7 +164,14 @@ public class GamePanel extends JPanel implements ActionListener {
         player.jump();
     }
 
+    public float getProgress() {
+        return (float) cameraX / levelEnd;
+    }
+
     /** Getters */
+    public int getAttempts() {
+        return attempts;
+    }
     public Timer getTimer() {
         return timer;
     }

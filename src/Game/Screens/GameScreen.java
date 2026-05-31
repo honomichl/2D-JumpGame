@@ -16,6 +16,9 @@ public class GameScreen extends JPanel {
     private final JLayeredPane layeredPane = new JLayeredPane();
     private final ScreenManager screenManager;
 
+    private final JLabel progressLabel = UIFactory.createLabel("");
+    private final JLabel attemptsLabel = UIFactory.createLabel("");
+
     public GameScreen(ScreenManager screen) {
         this.screenManager = screen;
 
@@ -23,12 +26,29 @@ public class GameScreen extends JPanel {
 
         setLayout(new BorderLayout());
         add(layeredPane, BorderLayout.CENTER);
+
+        JPanel topPanel = UIFactory.createBoxLayout();
+        topPanel.setOpaque(false);
+        topPanel.add(progressLabel);
+        topPanel.add(attemptsLabel);
+
+        JPanel hudPanel = new JPanel(new BorderLayout());
+        hudPanel.setOpaque(false);
+        hudPanel.setBounds(0, 0, 800, 600);
+        hudPanel.add(topPanel, BorderLayout.NORTH);
+
         gamePanel.setBounds(0, 0, 800, 600);
         pauseMenu.setBounds(0, 0, 800, 600);
 
         initPauseMenu();
 
         layeredPane.add(gamePanel, JLayeredPane.DEFAULT_LAYER);
+        layeredPane.add(hudPanel,  JLayeredPane.MODAL_LAYER);
+
+        gamePanel.getTimer().addActionListener(e -> {
+            progressLabel.setText("Progress: " + (int)(gamePanel.getProgress() * 100) + "%");
+            attemptsLabel.setText("Attempt: " + gamePanel.getAttempts());
+        });
 
         setFocusable(true);
         requestFocusInWindow();
