@@ -6,17 +6,12 @@ public class Main {
     }
 }
 
-//TODO pokusy a scorebar
-
-//TODO vic moznosti ve vsech meny
-
-//TODO animace
 //TODO strop spravne rozsirovani
 //TODO textury
 
 //TODO ikonka
+//TODO vic moznosti ve vsech meny
 
-//TODO jmena atributu
 //TODO readme
 //TODO popisky
 

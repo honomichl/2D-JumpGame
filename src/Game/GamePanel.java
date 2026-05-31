@@ -21,11 +21,16 @@ public class GamePanel extends JPanel implements ActionListener {
     private int attempts = 1;
     private int levelEnd = 0;
 
+
     private Player player;
     private ArrayList<Spike> spikes;
     private ArrayList<Block> blocks;
     private ArrayList<Floor> floors;
     private End end;
+
+    ArrayList<DeathParticle> particles = new ArrayList<>();
+    boolean dying = false;
+    int dyingTimer = 0;
 
     public GamePanel() {
         this.setBackground(AppSettings.getBackgroundColor());
@@ -58,8 +63,29 @@ public class GamePanel extends JPanel implements ActionListener {
         }
 
         /** checks for death */
-        if (Collisions.checkDeathCollision(player, spikes, blocks, floors, cameraX)) {
-            resetGameValues();
+        if (!dying && Collisions.checkDeathCollision(player, spikes, blocks, floors, cameraX)) {
+            for (int i = 0; i < 15; i++) {
+                particles.add(new DeathParticle(player.getX(), player.getY()));
+            }
+            dying = true;
+            dyingTimer = 0;
+        }
+
+        if (dying) {
+            for (int i = particles.size() - 1; i >= 0; i--) {
+                particles.get(i).update();
+                if (particles.get(i).isDone()){
+                    particles.remove(i);
+                }
+            }
+            dyingTimer++;
+            if (dyingTimer > 35) {
+                dying = false;
+                particles.clear();
+                resetGameValues();
+            }
+            repaint();
+            return;
         }
 
         Collisions.handleLanding(player, blocks, floors, cameraX);
@@ -87,7 +113,13 @@ public class GamePanel extends JPanel implements ActionListener {
         end.draw(g2d, cameraX);
 
         /** player */
-        player.draw(g2d);
+        if (!dying) {
+            player.draw(g2d);
+        }
+
+        for (DeathParticle p : particles) {
+            p.draw(g2d);
+        }
 
         /** temporary background grid */
         g2d.setColor(new Color(128, 128, 128, 50));

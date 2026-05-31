@@ -34,9 +34,5 @@ public class VictoryScreen extends JPanel {
         centerPanel.add(exitButton);
         add(centerPanel, BorderLayout.CENTER);
 
-//        /** bottom panel */
-//        JPanel bottomPanel = UIFactory.createFlowLayout();
-//        bottomPanel.add(UIFactory.createLabel("© 2026 moje apka"));
-//        add(bottomPanel, BorderLayout.SOUTH);
     }
 }
