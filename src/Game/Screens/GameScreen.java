@@ -27,6 +27,9 @@ public class GameScreen extends JPanel {
         setLayout(new BorderLayout());
         add(layeredPane, BorderLayout.CENTER);
 
+        progressLabel.setForeground(Color.WHITE);
+        attemptsLabel.setForeground(Color.WHITE);
+
         JPanel topPanel = UIFactory.createBoxLayout();
         topPanel.setOpaque(false);
         topPanel.add(progressLabel);
@@ -86,17 +89,15 @@ public class GameScreen extends JPanel {
         pauseMenu.setOpaque(false);
         pauseMenu.setFocusable(true);
 
-        /** top panel */
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        topPanel.setOpaque(false);
-        topPanel.add(UIFactory.createTitle("Pause menu"));
-
-        pauseMenu.add(topPanel, BorderLayout.NORTH);
-
         /** center panel */
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.setOpaque(false);
+
+        JLabel titleLabel = UIFactory.createTitle("Pause menu");
+        titleLabel.setForeground(Color.WHITE);
+
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JButton resumeButton = UIFactory.createButton("Resume");
         resumeButton.setFocusable(true);
@@ -104,16 +105,28 @@ public class GameScreen extends JPanel {
         JButton restartButton = UIFactory.createButton("Reset level");
         restartButton.setFocusable(true);
 
+        JButton menuButton = UIFactory.createButton("Menu");
+        menuButton.setFocusable(true);
+
         resumeButton.addActionListener(e -> togglePauseScreen());
         restartButton.addActionListener(e -> {
             gamePanel.resetGameValues();
             togglePauseScreen();
         });
+        menuButton.addActionListener(e -> {
+            gamePanel.resetGameValues();
+            togglePauseScreen();
+            screenManager.showWelcomeScreen();
+        });
 
-        centerPanel.add(Box.createVerticalStrut(100));
+        centerPanel.add(Box.createVerticalStrut(60));
+        centerPanel.add(titleLabel);
+        centerPanel.add(Box.createVerticalStrut(60));
         centerPanel.add(resumeButton);
         centerPanel.add(Box.createVerticalStrut(15));
         centerPanel.add(restartButton);
+        centerPanel.add(Box.createVerticalStrut(15));
+        centerPanel.add(menuButton);
         centerPanel.add(Box.createVerticalGlue());
 
         pauseMenu.add(centerPanel, BorderLayout.CENTER);

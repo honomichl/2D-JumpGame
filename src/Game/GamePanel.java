@@ -2,10 +2,13 @@ package Game;
 
 import Game.GameObjects.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -17,7 +20,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private Runnable onWin;
     private Timer timer;
     private int cameraX = 0;
-    private final int GAME_SPEED = 7;
+    private final int GAME_SPEED = 8;
     private int attempts = 1;
     private int levelEnd = 0;
 
@@ -27,6 +30,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private ArrayList<Block> blocks;
     private ArrayList<Floor> floors;
     private End end;
+    private BufferedImage background;
 
     ArrayList<DeathParticle> particles = new ArrayList<>();
     boolean dying = false;
@@ -41,6 +45,11 @@ public class GamePanel extends JPanel implements ActionListener {
         if (end != null) {
             levelEnd = end.getX();
         }
+
+        try {
+            background = ImageIO.read(getClass().getResourceAsStream("/background.png"));
+        } catch (IOException e) { e.printStackTrace(); }
+
 
         startGame();
 
@@ -100,6 +109,14 @@ public class GamePanel extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+        if (background != null) {
+            for (int bx = 0; bx < getWidth(); bx += 40) {
+                for (int by = 0; by < getHeight(); by += 40) {
+                    g2d.drawImage(background, bx, by, 40, 40, null);
+                }
+            }
+        }
+
         /** game objects */
         for (Floor floor : floors) {
             floor.draw(g2d, cameraX);
@@ -121,7 +138,8 @@ public class GamePanel extends JPanel implements ActionListener {
             p.draw(g2d);
         }
 
-        /** temporary background grid */
+        /** background grid and hitboxes for future improvements */
+/*
         g2d.setColor(new Color(128, 128, 128, 50));
         int gridSize = 40;
         int offsetX = cameraX % gridSize;
@@ -133,7 +151,6 @@ public class GamePanel extends JPanel implements ActionListener {
             g2d.drawLine(0, y, getWidth(), y);
         }
 
-        /** temporary hitboxes */
         g2d.setColor(Color.GREEN);
         g2d.draw(player.getBigHitbox());
 
@@ -151,6 +168,7 @@ public class GamePanel extends JPanel implements ActionListener {
             g2d.draw(floor.getHitbox());
         }
         g2d.translate(cameraX, 0);
+*/
 
         if (isPaused) {
             g2d.setColor(new Color(0,0,0,150));

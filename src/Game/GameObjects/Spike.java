@@ -1,14 +1,18 @@
 package Game.GameObjects;
 
 import Game.*;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class Spike {
     private final int x;
     private final int y;
     private final int size = 40;
     private final Polygon hitbox;
-
+    private BufferedImage img;
 
     public Spike(int x, int y) {
         this.x = x;
@@ -17,20 +21,15 @@ public class Spike {
         int[] xPoints = {x, x + (size / 2), x + size};
         int[] yPoints = {y + size, y, y + size};
         this.hitbox = new Polygon(xPoints, yPoints, 3);
+        try {
+            img = ImageIO.read(getClass().getResourceAsStream("/spike.png"));
+        } catch (IOException e) { e.printStackTrace(); }
     }
 
     public void draw(Graphics2D g2d, int cameraX) {
-        int screenX = x - cameraX;
-        int[] drawX = {screenX, screenX + (size / 2), screenX + size};
-        int[] drawY = {y + size, y, y + size};
-
-        /** fill */
-        g2d.setColor(Color.RED);
-        g2d.fillPolygon(drawX, drawY, 3);
-
-        /** outline */
-        g2d.setColor(AppSettings.getForegroundColor());
-        g2d.drawPolygon(drawX, drawY, 3);
+        if (img != null) {
+            g2d.drawImage(img, x - cameraX, y, 40, 40, null);
+        }
     }
 
     /** Getters */

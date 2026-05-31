@@ -6,7 +6,7 @@ public class AppSettings {
 
     // výchozí hodnoty
     private static String username = "Player";
-    private static String theme = "Light";
+    private static String theme = "Dark";
 
     public static Color getBackgroundColor() {
         if ("Dark".equals(theme)) {
